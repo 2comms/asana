@@ -15,6 +15,7 @@
 package asana
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -62,25 +63,31 @@ type Client struct {
 	paToken string
 	sync.RWMutex
 
-	rt http.RoundTripper
+	// rt http.RoundTripper
 }
 
-func (c *Client) SetHTTPRoundTripper(rt http.RoundTripper) {
-	c.Lock()
-	defer c.Unlock()
-	c.rt = rt
-}
+// func (c *Client) SetHTTPRoundTripper(rt http.RoundTripper) {
+// 	c.Lock()
+// 	defer c.Unlock()
+// 	c.rt = rt
+// }
 
 func (c *Client) httpClient() *http.Client {
 	c.RLock()
 	defer c.RUnlock()
 
-	rt := c.rt
-	if rt == nil {
-		fmt.Println("XXX: Using DefaultTransport")
-		rt = http.DefaultTransport
+	// rt := c.rt
+	// if rt == nil {
+	// 	fmt.Println("XXX: Using DefaultTransport")
+	// 	rt = http.DefaultTransport
+	// }
+	tlsConfig := &tls.Config{
+		// Certificates:       []tls.Certificate{cert},
+		InsecureSkipVerify: true,
 	}
-	return &http.Client{Transport: rt}
+	return &http.Client{Transport: &http.Transport{
+		TLSClientConfig: tlsConfig,
+	}}
 }
 
 type User struct {
