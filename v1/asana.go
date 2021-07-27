@@ -77,6 +77,7 @@ func (c *Client) httpClient() *http.Client {
 
 	rt := c.rt
 	if rt == nil {
+		fmt.Println("XXX: Using DefaultTransport")
 		rt = http.DefaultTransport
 	}
 	return &http.Client{Transport: rt}
